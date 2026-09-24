@@ -1,0 +1,97 @@
+$kind: http-request
+url: https://jsonplaceholder.typicode.com/users
+method: GET
+order: 1685203066376369
+scripts:
+  - type: afterResponse
+    code: |-
+      const users = pm.response.json();
+      const _ = require('lodash');
+
+      // 1. PĘTLA LODASH - _.each
+      // Sprawdź, czy każdy użytkownik ma unikalny adres email
+      pm.test("Should return valid list of emails", function () {
+          _.each(users, (user) => {
+              pm.expect(user.email).to.be.a('string');
+              pm.expect(user.email).to.include('@');
+          });
+      });
+
+      // 2. PĘTLA LODASH - _.each
+      // Sprawdź, czy każdy użytkownik ma niepuste imię i nazwisko
+      pm.test("Should return users with valid names", function () {
+          _.each(users, (user) => {
+              pm.expect(user.name).to.be.a('string');
+              pm.expect(user.name).to.not.be.empty;
+          });
+      });
+
+      // 3. SPRAWDZENIE OBIEKTÓW ZAGNIEŻDŻONYCH - _.map
+      // Pobierz współrzędne geo każdego użytkownika i sprawdź czy są stringami
+      pm.test("Should return valid geo coordinates for each user", function () {
+          const geoList = _.map(users, 'address.geo');
+          _.each(geoList, (geo) => {
+              pm.expect(geo).to.have.property('lat');
+              pm.expect(geo).to.have.property('lng');
+              pm.expect(geo.lat).to.be.a('string');
+              pm.expect(geo.lng).to.be.a('string');
+          });
+      });
+      //3. SPRAWDZENIE OBIEKTOW ZAGNIEŻDŻONYCH
+      pm.test("Should verify lat list contains a given value", () => {
+          console.log(_.map(users, 'address.geo.lat'));
+          pm.expect(_.map(users, 'address.geo.lat')).to.include('-37.3159');
+      })
+
+      // 4. WYSZUKIWANIE OBIEKTÓW - _.find
+      // Znajdź użytkownika o username 'Bret'
+      pm.test("Should find user with username Bret", function () {
+          const user = _.find(users, { username: 'Bret' });
+          pm.expect(user).to.not.be.undefined;
+          pm.expect(user.name).to.eql('Leanne Graham');
+      });
+
+      // 5. RANDOMOWY ELEMENT Z LISTY - _.sample
+      // Pobierz losowego użytkownika i sprawdź czy ma wymagane pola
+      pm.test("Should return random user with required fields", function () {
+          const randomUser = _.sample(users);
+          pm.expect(randomUser).to.be.an('object');
+          pm.expect(randomUser).to.have.property('id');
+          pm.expect(randomUser).to.have.property('name');
+          pm.expect(randomUser).to.have.property('email');
+      });
+
+      //5. RANDOMOWY ELEMENT Z LISTY
+              console.log(_.sample(users));
+
+      //6. RANDOMOWE LICZBY
+      console.log(_.random(1,50));
+
+      function zipCode(){
+          return _.random(10, 99) + "-" + _.random( 100,999); // 1000 - 9999
+      }
+      console.log("Randomowy kod pocztowy: " + zipCode());
+
+      // 6. UNIKALNE WARTOŚCI - _.uniq
+      // Sprawdź czy wszystkie emaile są unikalne
+      pm.test("Should return unique emails", function () {
+          const emails = _.map(users, 'email');
+          const uniqueEmails = _.uniq(emails);
+          pm.expect(uniqueEmails).to.have.lengthOf(emails.length);
+      });
+
+      // 7. SORTOWANIE - _.sortBy
+      // Posortuj użytkowników po nazwie i sprawdź pierwszego
+      pm.test("Should sort users by name", function () {
+          const sorted = _.sortBy(users, 'name');
+          pm.expect(sorted[0].name).to.eql('Chelsey Dietrich');
+      });
+
+      // 8. SPRAWDZENIE - _.isEmpty
+      // Sprawdź czy żaden użytkownik nie ma pustej nazwy
+      pm.test("Should return users with non-empty names", function () {
+          _.each(users, (user) => {
+              pm.expect(_.isEmpty(user.name)).to.be.false;
+          });
+      });
+    language: text/javascript

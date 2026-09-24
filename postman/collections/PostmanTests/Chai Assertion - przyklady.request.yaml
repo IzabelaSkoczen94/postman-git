@@ -1,0 +1,96 @@
+$kind: http-request
+url: https://jsonplaceholder.typicode.com/users
+method: GET
+scripts:
+  - type: afterResponse
+    code: |+
+      const json = pm.response.json();
+
+      // 1. SPRAWDZENIE STATUS CODE
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      // 2.SPRAWDZENIE POPRAWNOSCI ODPOWIEDZI
+      pm.test("Should return valid response with json body", function () {
+          pm.response.to.be.ok;
+          pm.response.to.be.withBody;
+          pm.response.to.be.json;
+          pm.response.to.not.be.empty;
+      })
+
+      //3. SPRAWDZENIE CZY RESPONSE JEST TABLICĄ
+      pm.test("Should return response as an array", () => {
+          pm.expect(json).to.be.an("array")
+      });
+
+      //4. SPRAWDZENIE DLUGOSCI TABLICY
+      pm.test("Should return 10 elements in the array", () => {
+          pm.expect(json.length).to.eql(10);
+          pm.expect(json).to.have.lengthOf(10);
+      })
+
+      //5. SPRAWDZENIE DANYCH OBIEKTU
+      pm.test("Should return username as a non empty string", () => {
+          pm.expect(json[0].username).to.not.be.empty;
+          pm.expect(json[0].username).to.be.a("string");
+          pm.expect(json[0].username).to.eql("Bret");
+      });
+
+      //6. SPRAWDZENIE CZY OBIEKT NIE ZAWIERA PODANYCH KLUCZY
+      pm.test("Should return object without given keys", () => {
+          pm.expect(json[0]).to.not.have.keys('username', 'password');
+      });
+
+      //7. SPRAWDZENIE CZY OBIEKT ZAWIERA PODANE KLUCZE
+      pm.test("Should return object without given keys", () => {
+          pm.expect(json[0]).to.have.any.keys('username', 'password');
+      });
+
+      //7. SPRAWDZENIE CZY OBIEKT ZAWIERA WSZYSKIE PODANE KLUCZE
+      pm.test("Should return object with given keys", () => {
+          pm.expect(json[0]).to.have.all.keys('id', 'name', 'username', 'email', 'address', 'phone', 'website', 'company');
+      });
+      //7. SPRAWDZENIE CZY OBIEKT ZAWIERA WSZYSKIE PODANE KLUCZE
+      pm.test("Should return oject with given keys", () => {
+          pm.expect(json[0].address.geo).to.have.all.keys('lat', 'lng');
+      });
+
+      //8. SPRAWDZENIE CZY OBIEKT ZAWIERA POJEDYNCZY KLUCZE
+      pm.test("Should return object with given value", () => {
+          pm.expect(json[0].address.geo).to.have.property('lat')
+      });
+
+      //9. SPRAWDZENIE CZY ADRES EMAIL ZAWIERA ZNAK @
+      pm.test("Should return email with @ sign", ()=>{
+          pm.expect(json[0].email).to.be.a('string');
+          pm.expect(json[0].email).to.include('@');
+      });
+
+      //9. SPRAWDZENIE CZY RESPONSE ZAWIERA PODANY NAGLOWEK
+      pm.test("Should return Content-Type", () => {      
+          pm.response.to.have.header('Content-Type');
+      });
+
+      //10. SPRAWDZENIE CZY NAGŁÓWEK ZAWIERA POPRAWWNĄ WARTOŚĆ
+      pm.test("Should return header Content-Type", () => {      
+          const contentType = pm.response.headers.get("Content-Type");
+          pm.expect(contentType).to.include("application/json");
+      });
+
+      //11. SPRAWDZENIE CZASU ODPOWIEDZI
+      pm.test("Should return response time less than 400ms", () => {  
+          pm.expect(pm.response.responseTime).to.be.below(400);
+      });
+
+      //12. eql vs equal
+      pm.test("EQL - Should return correct username", () => {
+          pm.expect(json[0].username).to.eql('Bret')
+      });
+
+      pm.test("EQUAL - Should correct username", ()=> {
+          pm.expect(json[0].username).to.equal('Bret')    
+      });
+
+    language: text/javascript
+order: 1790249636435
