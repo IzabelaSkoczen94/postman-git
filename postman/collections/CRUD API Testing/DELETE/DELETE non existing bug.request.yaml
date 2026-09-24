@@ -1,0 +1,21 @@
+$kind: http-request
+url: http://localhost:3000/bugs/:id
+method: DELETE
+pathVariables:
+  id: "{{bugId}}"
+body:
+  type: json
+  content: ""
+scripts:
+  - type: afterResponse
+    code: |
+      const json = pm.response.json();
+
+      pm.test("Status code is 404", function () {
+          pm.response.to.have.status(404);
+      });
+
+      pm.test("Error message is Not Found", function() {
+          pm.expect(json.error).to.eql("Not Found");
+      });
+order: 1770987343316764

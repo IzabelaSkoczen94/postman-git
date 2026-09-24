@@ -1,0 +1,162 @@
+$kind: http-request
+url: "{{url}}/employees"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "firstName": "{{cRandomFirstName}}",
+      "lastName": "{{cRandomLastName}}",
+      "username": "{{cRandomUserName}}",
+      "email": "{{cRandomEmail}}",
+      "phone": "{{cRandomPhoneNumber}}",
+      "website": "{{cRandomUrl}}",
+      "role": "{{cRandomJobTitle}}",
+      "type": "{{cRandomJobType}}",
+      "address": {
+        "street": "{{cRandomStreetAddress}}",
+        "suite": "{{cRandomAlphaNumeric}}",
+        "city": "{{cRandomCity}}",
+        "zipcode": "{{cRandomZipCode}}"
+      },
+      "company": {
+        "companyName": "{{cRandomCompanyName}}",
+        "taxNumber": "{{cRandomTaxNumber}}",
+        "companyPhone": "{{cRandomCompanyPhone}}"
+      }
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const json = pm.response.json();
+
+      const firstName = pm.collectionVariables.get('cRandomFirstName');
+      const lastName = pm.collectionVariables.get('cRandomLastName');
+      const username = pm.collectionVariables.get('cRandomUserName');
+      const email = pm.collectionVariables.get('cRandomEmail');
+      const phone = pm.collectionVariables.get('cRandomPhoneNumber');
+      const website = pm.collectionVariables.get('cRandomUrl');
+      const role = pm.collectionVariables.get('cRandomJobTitle');
+      const type = pm.collectionVariables.get('cRandomJobType');
+      const street = pm.collectionVariables.get('cRandomStreetAddress');
+      const suite = pm.collectionVariables.get('cRandomAlphaNumeric');
+      const city = pm.collectionVariables.get('cRandomCity');
+      const zipcode = pm.collectionVariables.get('cRandomZipCode');
+      const companyName = pm.collectionVariables.get('cRandomCompanyName');
+      const taxNumber = pm.collectionVariables.get('cRandomTaxNumber');
+      const companyPhone = pm.collectionVariables.get('cRandomCompanyPhone');
+
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      pm.test("Should return correct firstName", function () {
+          pm.expect(json.firstName).to.eql(firstName);
+      });
+
+      pm.test("Should return correct lastName", function () {
+          pm.expect(json.lastName).to.eql(lastName);
+      });
+
+      pm.test("Should return correct username", function () {
+          pm.expect(json.username).to.eql(username);
+      });
+
+      pm.test("Should return correct email", function () {
+          pm.expect(json.email).to.eql(email);
+      });
+
+      pm.test("Should return correct phone", function () {
+          pm.expect(json.phone).to.eql(phone);
+      });
+
+      pm.test("Should return correct website", function () {
+          pm.expect(json.website).to.eql(website);
+      });
+
+      pm.test("Should return correct role", function () {
+          pm.expect(json.role).to.eql(role);
+      });
+
+      pm.test("Should return correct type", function () {
+          pm.expect(json.type).to.eql(type);
+      });
+
+      pm.test("Should return correct address.street", function () {
+          pm.expect(json.address.street).to.eql(street);
+      });
+
+      pm.test("Should return correct address.suite", function () {
+          pm.expect(json.address.suite).to.eql(suite);
+      });
+
+      pm.test("Should return correct address.city", function () {
+          pm.expect(json.address.city).to.eql(city);
+      });
+
+      pm.test("Should return correct address.zipcode", function () {
+          pm.expect(json.address.zipcode).to.eql(zipcode);
+      });
+
+      pm.test("Should return correct company.companyName", function () {
+          pm.expect(json.company.companyName).to.eql(companyName);
+      });
+
+      pm.test("Should return correct company.taxNumber", function () {
+          pm.expect(json.company.taxNumber).to.eql(taxNumber);
+      });
+
+      pm.test("Should return correct company.companyPhone", function () {
+          pm.expect(json.company.companyPhone).to.eql(companyPhone);
+      });
+
+      pm.collectionVariables.set("employeeId", json.id);
+    language: text/javascript
+  - type: beforeRequest
+    code: |-
+      const firstName = pm.variables.replaceIn('{{$randomFirstName}}');
+      pm.collectionVariables.set('cRandomFirstName', firstName);
+
+      const lastName = pm.variables.replaceIn('{{$randomLastName}}');
+      pm.collectionVariables.set('cRandomLastName', lastName);
+
+      const username = pm.variables.replaceIn('{{$randomUserName}}');
+      pm.collectionVariables.set('cRandomUserName', username);
+
+      const email = pm.variables.replaceIn('{{$randomEmail}}');
+      pm.collectionVariables.set('cRandomEmail', email);
+
+      const phone = pm.variables.replaceIn('{{$randomPhoneNumber}}');
+      pm.collectionVariables.set('cRandomPhoneNumber', phone);
+
+      const website = pm.variables.replaceIn('{{$randomUrl}}');
+      pm.collectionVariables.set('cRandomUrl', website);
+
+      const role = pm.variables.replaceIn('{{$randomJobTitle}}');
+      pm.collectionVariables.set('cRandomJobTitle', role);
+
+      const type = pm.variables.replaceIn('{{$randomJobType}}');
+      pm.collectionVariables.set('cRandomJobType', type);
+
+      const street = pm.variables.replaceIn('{{$randomStreetAddress}}');
+      pm.collectionVariables.set('cRandomStreetAddress', street);
+
+      const suite = pm.variables.replaceIn('{{$randomAlphaNumeric}}');
+      pm.collectionVariables.set('cRandomAlphaNumeric', suite);
+
+      const city = pm.variables.replaceIn('{{$randomCity}}');
+      pm.collectionVariables.set('cRandomCity', city);
+
+      const zipcode = Math.floor(10000 + Math.random() * 90000).toString();
+      pm.collectionVariables.set('cRandomZipCode', zipcode);
+
+      const companyName = pm.variables.replaceIn('{{$randomCompanyName}}');
+      pm.collectionVariables.set('cRandomCompanyName', companyName);
+
+      const taxNumber = pm.variables.replaceIn('{{$randomPhoneNumber}}');
+      pm.collectionVariables.set('cRandomTaxNumber', taxNumber);
+
+      const companyPhone = pm.variables.replaceIn('{{$randomPhoneNumber}}');
+      pm.collectionVariables.set('cRandomCompanyPhone', companyPhone);
+    language: text/javascript
+order: 1790237416747

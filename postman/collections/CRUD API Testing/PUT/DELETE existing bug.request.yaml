@@ -1,0 +1,21 @@
+$kind: http-request
+url: http://localhost:3000/bugs/:id
+method: DELETE
+pathVariables:
+  id: "{{bugId}}"
+body:
+  type: json
+  content: ""
+scripts:
+  - type: afterResponse
+    code: "const json = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r\n"
+    language: text/javascript
+order: 3565981562787752

@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{url}}/employees"
+method: GET
+body:
+  type: json
+  content: ""
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r\n"
+    language: text/javascript
+order: 1225821234794

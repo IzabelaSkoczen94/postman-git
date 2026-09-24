@@ -1,0 +1,23 @@
+$kind: collection
+variables:
+  bugId: ""
+  employeeId: ""
+  cRandomFirstName: ""
+  cRandomLastName: ""
+  cRandomUserName: ""
+  cRandomEmail: ""
+  cRandomPhoneNumber: ""
+  cRandomUrl: ""
+  cRandomJobTitle: ""
+  cRandomJobType: ""
+  cRandomStreetAddress: ""
+  cRandomAlphaNumeric: ""
+  cRandomCity: ""
+  cRandomZipCode: ""
+  cRandomCompanyName: ""
+  cRandomTaxNumber: ""
+  cRandomCompanyPhone: ""
+scripts:
+  - type: http:beforeRequest
+    code: console.log("Informacja z Before request dla calej kolekcji")
+    language: text/javascript

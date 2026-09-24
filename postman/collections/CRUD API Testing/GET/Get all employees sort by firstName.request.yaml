@@ -1,0 +1,28 @@
+$kind: http-request
+url: http://localhost:3000/employees?_sort=firstName
+method: GET
+queryParams:
+  _sort: firstName
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      const json = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Should return non empty list\", function () {\r
+
+      \    pm.expect(json).not.be.empty;\r
+
+      });\r\n"
+    language: text/javascript
+order: 3000

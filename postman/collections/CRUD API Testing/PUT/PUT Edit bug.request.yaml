@@ -1,0 +1,49 @@
+$kind: http-request
+url: http://localhost:3000/bugs/{{bugId}}
+method: PUT
+body:
+  type: json
+  content: "    {\r
+
+    \        \"title\": \"This is just a test\",\r
+
+    \        \"description\": \"When I send PATH request to /bugs, instead of status code 200, I'm getting 404\",\r
+
+    \        \"employeeId\": 1,\r
+
+    \        \"status\": \"open\",\r
+
+    \        \"id\": \"1OVdTOwwXs4\"\r
+
+    \    }"
+scripts:
+  - type: afterResponse
+    code: "const json = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Should return correct title\", function () {\r
+
+      \    pm.expect(json.title).to.eql(\"This is just a test\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Should status in open\", function() {\r
+
+      \    pm.expect(json.status).to.eql(\"open\")\r
+
+      })\r
+
+      \r\n"
+    language: text/javascript
+order: 3000
