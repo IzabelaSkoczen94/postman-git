@@ -1,0 +1,30 @@
+$kind: http-request
+url: "{{url}}/boards/{{boardId}}?key={{key}}&token={{token}}"
+method: GET
+queryParams:
+  key: "{{key}}"
+  token: "{{token}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "const json = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status code is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const boardName = pm.iterationData.get(\"boardName\");\r
+
+      pm.test(`Should return correct board Name ${boardName}`, () => {
+      pm.expect(json.name).to.eql(boardName);\r
+
+      });"
+    language: text/javascript
+order: 4000

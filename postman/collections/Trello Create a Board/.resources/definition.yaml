@@ -1,0 +1,4 @@
+$kind: collection
+variables:
+  boardId: ""
+  boardName: My Test Board

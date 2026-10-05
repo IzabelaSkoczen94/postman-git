@@ -1,0 +1,67 @@
+$kind: http-request
+url: "{{url}}/boards"
+method: POST
+headers:
+  - key: Authorization
+    value: Bearer <access_token>
+    disabled: true
+body:
+  type: json
+  content: "{\r
+
+    \    \"defaultLists\": true,\r
+
+    \    \"idOrganization\": \"6abb6a0d867aff4455986259\",\r
+
+    \    \"name\": \"tIza\",\r
+
+    \    \"prefs_background_url\":
+    \"https://images.unsplash.com/photo-1779464433199-ca57ba28339b?ixid=M3w3MDY\
+    2fDB8MXxjb2xsZWN0aW9ufDF8MzE3MDk5fHx8fHwyfHwxNzkwNzcxNzgzfA&ixlib=rb-4.1.0&\
+    w=2560&h=2048&q=90\",\r
+
+    \    \"prefs_permissionLevel\": \"org\",\r
+
+    \    \"prefs_selfJoin\": true,\r
+
+    \    \"dsc\":
+    \"d9b7524a13038dde802fdfdaa6aa43c6979621137d877e51b9d40d1e4e2403a5\",\r
+
+    \    \"token\": \"{{token}}\",\r
+
+    \    \"key\": \"{{key}}\"\r
+
+    }"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "const json = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const boardName = pm.collectionVariables.get(\"boardName\");\r
+
+      \r
+
+      pm.test(`Should return correct board name ${boardName}`, function () {\r
+
+      \    pm.expect(json.name).to.eql(boardName);\r
+
+      });\r
+
+      \r
+
+      \r
+
+      pm.collectionVariables.set(\"boardId\", json.id);"
+    language: text/javascript
+order: 3937

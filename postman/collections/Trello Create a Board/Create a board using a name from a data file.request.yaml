@@ -1,0 +1,245 @@
+$kind: http-request
+url: "{{url}}/boards/?name={{boardName}}&token={{token}}&key={{key}}"
+method: POST
+headers:
+  - key: Authorization
+    value: Bearer <access_token>
+    disabled: true
+queryParams:
+  name: "{{boardName}}"
+  token: "{{token}}"
+  key: "{{key}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "const names = JSON.parse(pm.variables.get(\"boardNames\"));\r
+
+      \r
+
+      function checkResponse(response, boardName) {\r
+
+      \    pm.test(`Status 200 dla: ${boardName}`, function () {\r
+
+      \        pm.expect(response.code).to.eql(200);\r
+
+      \    });\r
+
+      \r
+
+      \    pm.test(`Poprawna nazwa: ${boardName}`, function () {\r
+
+      \        pm.expect(response.json().name).to.eql(boardName);\r
+
+      \    });\r
+
+      \r
+
+      \    if (response.code === 200) {\r
+
+      \        pm.collectionVariables.set(\"boardId\", response.json().id);\r
+
+      \    }\r
+
+      }\r
+
+      \r
+
+      // Sprawdź pierwszy request wysłany przyciskiem Send.\r
+
+      checkResponse(pm.response, names[0]);\r
+
+      \r
+
+      // Pobierz URL i nagłówki głównego requestu.\r
+
+      const baseUrl = pm.variables.replaceIn(\r
+
+      \    pm.request.url.toString()\r
+
+      );\r
+
+      \r
+
+      if (!/[?&]name=/.test(baseUrl)) {\r
+
+      \    throw new Error(\"Brak parametru name w URL. Sprawdź Params.\");\r
+
+      }\r
+
+      \r
+
+      const headers = pm.request.headers\r
+
+      \    .all()\r
+
+      \    .filter(header => !header.disabled)\r
+
+      \    .map(header => ({\r
+
+      \        key: header.key,\r
+
+      \        value: pm.variables.replaceIn(header.value)\r
+
+      \    }));\r
+
+      \r
+
+      // Wyślij pozostałe nazwy kolejno.\r
+
+      for (const boardName of names.slice(1)) {\r
+
+      \    const url = baseUrl.replace(\r
+
+      \        /([?&]name=)[^&]*/,\r
+
+      \        (_, prefix) => prefix + encodeURIComponent(boardName)\r
+
+      \    );\r
+
+      \r
+
+      \    console.log(\"Testowana nazwa:\", boardName);\r
+
+      \r
+
+      \    try {\r
+
+      \        const response = await pm.sendRequest({\r
+
+      \            url: url,\r
+
+      \            method: pm.request.method,\r
+
+      \            header: headers\r
+
+      \        });\r
+
+      \r
+
+      \        checkResponse(response, boardName);\r
+
+      \r
+
+      \        console.log(\r
+
+      \            \"Odpowiedź:\",\r
+
+      \            boardName,\r
+
+      \            response.code,\r
+
+      \            response.text()\r
+
+      \        );\r
+
+      \    } catch (error) {\r
+
+      \        pm.test(`Request wysłany dla: ${boardName}`, function () {\r
+
+      \            throw error;\r
+
+      \        });\r
+
+      \    }\r
+
+      }\r
+
+      \r
+
+      \r
+
+      \r
+
+      \r
+
+      \r
+
+      // const json = pm.response.json();\r
+
+      \r
+
+      // pm.test(\"Status code is 200\", function () {\r
+
+      //     pm.response.to.have.status(200);\r
+
+      // });\r
+
+      \r
+
+      // // Nazwa ustawiona w Pre-request.\r
+
+      // const boardName = pm.variables.get(\"boardName\");\r
+
+      \r
+
+      // pm.test(`Should return correct board name ${boardName}`, function ()
+      {\r
+
+      //     pm.expect(json.name).to.eql(boardName);\r
+
+      // });\r
+
+      \r
+
+      // pm.collectionVariables.set(\"boardId\", json.id);\r
+
+      \r
+
+      \r
+
+      \r
+
+      // const json = pm.response.json();\r
+
+      \r
+
+      // pm.test(\"Status code is 200\", function () {\r
+
+      //     pm.response.to.have.status(200);\r
+
+      // });\r
+
+      \r
+
+      // const boardName = pm.iterationData.get(\"boardName\");\r
+
+      \r
+
+      // pm.test(`Should return correct board name ${boardName}`, function ()
+      {\r
+
+      //     pm.expect(json.name).to.eql(boardName);\r
+
+      // });\r
+
+      \r
+
+      \r
+
+      // pm.collectionVariables.set(\"boardId\", json.id);"
+    language: text/javascript
+  - type: beforeRequest
+    code: "const names = [\r
+
+      \    \"nazwaTablicy\", \"NAZWATABLICY\", \"NAZWA_TABLICY\",\r
+
+      \    \"NAZWA TABLICY\", \"1\", \"!\", \"@\", \"#\", \"$\", \"%\",\r
+
+      \    \"^\", \"&\", \"*\", \"(\", \")\", \"_\", \"+\", \"=\", \"-\",\r
+
+      \    \"{\", \"}\", \"'\", \"|\", \"?\", \"<b>board</b>\", \">\", \"<\"\r
+
+      ];\r
+
+      \r
+
+      pm.variables.set(\"boardNames\", JSON.stringify(names));\r
+
+      \r
+
+      // Pierwszą nazwę wyśle główny request po kliknięciu Send.\r
+
+      pm.variables.set(\"boardName\", names[0]);"
+    language: text/javascript
+order: 1000

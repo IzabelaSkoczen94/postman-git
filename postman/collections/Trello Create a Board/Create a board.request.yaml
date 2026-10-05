@@ -1,0 +1,44 @@
+$kind: http-request
+url: "{{url}}/boards/?name={{boardName}}&token={{token}}&key={{key}}"
+method: POST
+headers:
+  - key: Authorization
+    value: Bearer <access_token>
+    disabled: true
+queryParams:
+  name: "{{boardName}}"
+  token: "{{token}}"
+  key: "{{key}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "const json = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const boardName = pm.collectionVariables.get(\"boardName\");\r
+
+      \r
+
+      pm.test(`Should return correct board name ${boardName}`, function () {\r
+
+      \    pm.expect(json.name).to.eql(boardName);\r
+
+      });\r
+
+      \r
+
+      \r
+
+      pm.collectionVariables.set(\"boardId\", json.id);"
+    language: text/javascript
+order: 3000

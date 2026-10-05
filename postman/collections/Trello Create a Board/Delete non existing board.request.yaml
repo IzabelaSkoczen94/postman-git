@@ -1,0 +1,30 @@
+$kind: http-request
+url: "{{url}}/boards/{{boardId}}?key={{key}}&token={{token}}"
+method: DELETE
+headers:
+  - key: Authorization
+    value: Bearer <access_token>
+    disabled: true
+queryParams:
+  key: "{{key}}"
+  token: "{{token}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 404\", () => {\r
+
+      \    pm.response.to.have.status(404);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Should return resource not found\", () => {\r
+
+      \    pm.expect(pm.response.text()).to.include(\"The requested resource was
+      not found.\");\r
+
+      });"
+    language: text/javascript
+order: 7000
