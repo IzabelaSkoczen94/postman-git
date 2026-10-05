@@ -1,0 +1,53 @@
+$kind: http-request
+url: "{{url}}/cards/:id?key={{key}}&token={{token}}&name={{ecardName}}&idList={{secondListId}}"
+method: PUT
+headers:
+  - key: Authorization
+    value: Bearer <access_token>
+    disabled: true
+queryParams:
+  key: "{{key}}"
+  token: "{{token}}"
+  name: "{{ecardName}}"
+  idList: "{{secondListId}}"
+pathVariables:
+  id: "{{idCard}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "const json = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      const ecardName = pm.collectionVariables.get(\"ecardName\");\r
+
+      const secondListId = pm.collectionVariables.get(\"secondListId\");\r
+
+      \r
+
+      pm.test(`Should return correct edit card name${ecardName}`, function () {\r
+
+      \    pm.expect(json.name).to.eql(ecardName);\r
+
+      });\r
+
+      \r
+
+      pm.test(`Should return correct second list id ${secondListId}`, function () {\r
+
+      \    pm.expect(json.idList).to.eql(secondListId);\r
+
+      });\r
+
+      \r
+
+      pm.collectionVariables.set(\"idCard\", json.id);"
+    language: text/javascript
+order: 5941

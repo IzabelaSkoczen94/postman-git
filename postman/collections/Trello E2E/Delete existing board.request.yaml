@@ -1,0 +1,27 @@
+$kind: http-request
+url: "{{url}}/boards/{{boardId}}?key={{key}}&token={{token}}"
+method: DELETE
+headers:
+  - key: Authorization
+    value: Bearer <access_token>
+    disabled: true
+queryParams:
+  key: "{{key}}"
+  token: "{{token}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const json = pm.response.json();\r
+
+      //pm.collectionVariables.set(\"boardId\", json.id);"
+    language: text/javascript
+order: 6000

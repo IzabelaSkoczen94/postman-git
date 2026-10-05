@@ -1,0 +1,11 @@
+$kind: collection
+variables:
+  boardId: ""
+  boardName: My Test Board
+  firstListName: ""
+  secondListName: ""
+  firstListId: ""
+  secondListId: ""
+  idCard: ""
+  cardName: ""
+  ecardName: ""

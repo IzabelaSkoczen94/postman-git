@@ -1,0 +1,41 @@
+$kind: http-request
+url: "{{url}}/lists?idBoard={{boardId}}&name={{secondListName}}&key={{key}}&tok\
+  en={{token}}"
+method: POST
+queryParams:
+  idBoard: "{{boardId}}"
+  name: "{{secondListName}}"
+  key: "{{key}}"
+  token: "{{token}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "const json = pm.response.json()\r
+
+      \r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const secondListName = pm.collectionVariables.get(\"secondListName\")\r
+
+      pm.test(`Should return correct list name ${{secondListName}}`, function ()
+      {\r
+
+      \    pm.expect(json.name).to.eql(secondListName)\r
+
+      });\r
+
+      \r
+
+      pm.collectionVariables.set(\"secondListId\", json.id)\r\n"
+    language: text/javascript
+order: 3000

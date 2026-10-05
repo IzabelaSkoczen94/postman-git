@@ -1,0 +1,42 @@
+$kind: http-request
+url: "{{url}}/cards?idList={{firstListId}}&key={{key}}&token={{token}}&name={{c\
+  ardName}}"
+method: POST
+headers:
+  - key: Authorization
+    value: Bearer <access_token>
+    disabled: true
+queryParams:
+  idList: "{{firstListId}}"
+  key: "{{key}}"
+  token: "{{token}}"
+  name: "{{cardName}}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "const json = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      const cardName= pm.collectionVariables.get(\"cardName\");\r
+
+      \r
+
+      pm.test(`Should return correct card name${cardName}`, function () {\r
+
+      \    pm.expect(json.name).to.eql(cardName);\r
+
+      });\r
+
+      \r
+
+      pm.collectionVariables.set(\"idCard\", json.id);"
+    language: text/javascript
+order: 5000
